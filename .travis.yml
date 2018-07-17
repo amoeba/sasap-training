@@ -11,6 +11,7 @@ addons:
     - librdf0-dev
 r_packages:
     - blogdown
+    - gh
     - git2r
     - remotes
 before_script:
