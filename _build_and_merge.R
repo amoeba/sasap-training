@@ -1,49 +1,30 @@
-#build and merge
-library(git2r)
+top <- getwd()
+tags <- names(git2r::tags())
 
+if [ ! -d public/materials ]; then
+    mkdir -p public/materials
+fi
 
-build_path <- Sys.getenv("build_path")
-print(build_path)
-
-tag_list <- c("v1.0", "v2.0")
-print(tag_list)
-
-
-# Build all books in the books subdir
-for (zz in 1:length(tag_list)) {
-
-
-  tag_list <- c("v1.0", "v2.0")
-
-  print(paste("Building book ", tag_list[zz]))
-
-  checkout(".", tag_list[zz])
-
-  if (getwd() != "materials/reproducible-analysis-in-r"){
-    setwd("materials/reproducible-analysis-in-r")
-  }
-  devtools::install_deps('.') # Installs book-specific R deps
-  # defined in DESCRIPTION file
-  bookdown::render_book('index.Rmd', c('bookdown::gitbook'), clean_envir = F)
-
-  fls <- list.files("_book")
-
-  these_are_dir_names <- c("reproducible-research-in-r-juneau", "reproducible-research-in-r-anchorage")
-
-  if (dir.exists(paste0("/home/travis/build/jeanetteclark/sasap-training/public/materials/", these_are_dir_names[zz])) == FALSE){
-    dir.create(paste0("/home/travis/build/jeanetteclark/sasap-training/public/materials/", these_are_dir_names[zz]), recursive = T)
-  }
-
-  t <- lapply(paste0("_book/",fls), file.copy, to = paste0("/home/travis/build/jeanetteclark/sasap-training/public/materials/", these_are_dir_names[zz]),
-                 recursive = T, overwrite = T, copy.mode = T)
-  print(t)
-
-  unlink("_book", recursive = T)
-  rm(fls)
-
-  setwd(build_path)
+if (!dir.exists("public/materials")) {
+  dir.create("public/materials", recursive = TRUE)
 }
 
-setwd(build_path)
+# Build all books in the books subdir
+for (tag in tags) {
+  message("Building ", tag)
+  git2r::checkout(".", tag)
 
-print(list.files("/home/travis/build/jeanetteclark/sasap-training/public/materials/reproducible-research-in-r-juneau"))
+  for (material in dir("materials")) {
+    message("Building book", material, " on tag ", tag)
+
+    setwd(file.path("materials", material))
+
+    devtools::install_deps(".")
+    bookdown::render_book('index.Rmd', c('bookdown::gitbook'))
+    
+    file.copy("_book", file.path(top, "public", "materials", material, tag), recursive = TRUE)
+    unlink("_book", recursive = TRUE)
+
+    setwd(top)
+  }
+}

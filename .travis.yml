@@ -1,8 +1,7 @@
 language: r
 cache: packages
-install:
-  - git clone https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG
-  - cd $TRAVIS_REPO_SLUG
+git:
+  depth: 99999
 branches:
   only:
   - master
@@ -13,14 +12,11 @@ addons:
 r_packages:
     - blogdown
     - git2r
-env:
-  global:
-    - build_path=${TRAVIS_BUILD_DIR}
 before_script:
     - Rscript -e 'blogdown::install_hugo(version = "0.29")'
 script:
     - Rscript -e 'blogdown::build_site()'
-    - Rscript -e "source('_build_and_merge.R')"
+    - Rscript _build_and_merge.R
     - touch public/.nojekyll
 deploy:
   provider: pages
