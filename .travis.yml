@@ -1,7 +1,7 @@
 language: r
 cache: packages
 git:
-  depth: 99999
+  depth: false
 branches:
   only:
   - master
