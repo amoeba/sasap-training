@@ -12,6 +12,7 @@ addons:
 r_packages:
     - blogdown
     - git2r
+    - remotes
 before_script:
     - Rscript -e 'blogdown::install_hugo(version = "0.29")'
 script:

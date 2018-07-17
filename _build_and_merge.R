@@ -15,7 +15,7 @@ for (tag in tags) {
 
     setwd(file.path("materials", material))
 
-    devtools::install_deps(".")
+    remotes::install_deps(".")
     bookdown::render_book('index.Rmd', c('bookdown::gitbook'))
     
     file.copy("_book", file.path(top, "public", "materials", material, tag), recursive = TRUE)
