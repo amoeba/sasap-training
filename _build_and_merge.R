@@ -1,10 +1,6 @@
 top <- getwd()
 tags <- names(git2r::tags())
 
-if [ ! -d public/materials ]; then
-    mkdir -p public/materials
-fi
-
 if (!dir.exists("public/materials")) {
   dir.create("public/materials", recursive = TRUE)
 }
