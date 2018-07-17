@@ -21,7 +21,8 @@ for (tag in tags) {
                           clean_envir = FALSE)
     
     message("Copying _book folder from ", getwd(), " to ", file.path(top, "public", "materials", material, tag))
-    file.copy("_book", file.path(top, "public", "materials", paste0(material, "-", tag)), recursive = TRUE)
+    copy_dest <- file.path(top, "public", "materials", paste0(material, "-", tag))
+    sys::exec_wait("cp", c("-r", "_book", copy_dest))
 
     message("Materials folder contains:", dir(file.path(top, "public", "materials")))
     unlink("_book", recursive = TRUE)
